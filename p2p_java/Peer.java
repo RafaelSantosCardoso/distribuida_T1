@@ -43,4 +43,8 @@ public class Peer {
     public void setTimeout(Integer timeout){
         this.timeout = timeout;
     } 
+    @Override
+    public String toString() {
+        return ("\nNome: "+name +"\nId: "+ id +"\nIP: "+ addrIp +"\nPorta: "+ port );
+    }
 }

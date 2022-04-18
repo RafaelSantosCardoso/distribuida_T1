@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.util.List;
 
 public class p2pPeerClient extends Thread {
 	protected DatagramSocket socket = null;
@@ -37,8 +39,8 @@ public class p2pPeerClient extends Thread {
 					System.out.println("Example: resource index.html 127.0.0.1");
 					System.out.println("\nPara buscar um recurso: search <conteudo a ser buscado>");
 					System.out.println("Example: search index.html");
-					System.out.println("\nPara buscar descobrir o peer de um recurso: find <hash>");
-					System.out.println("Example: find ABHA45687dasASDS");
+					System.out.println("\nPara buscar o peer de um recurso: find <hash>");
+					System.out.println("Example: find ABHA45687dasASDS\n\n");
 					
 					try {
 						str = obj.readLine();
@@ -51,31 +53,31 @@ public class p2pPeerClient extends Thread {
 								} else {
 									System.out.println("A criação do recurso falhou. Tente novamente");
 								}
-							case "search":
-							case "find":
-			
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					
-					try {
-						packet = new DatagramPacket(resource, resource.length, addr, peer_port);
-						socket.send(packet);
-						
-						while (true) {
-							try {
-								// obtem a resposta
-								packet = new DatagramPacket(response, response.length);
-								socket.setSoTimeout(500);
-								socket.receive(packet);
-								
-								// mostra a resposta
-								String resposta = new String(packet.getData(), 0, packet.getLength());
-								System.out.println("recebido: " + resposta);
-							} catch (IOException e) {
 								break;
+							case "search":
+
+							try{
+								List<String> resourcesList = serverIf.searchResource(vars[1]);
+
+								if(resourcesList.size() > 0){
+									for(int i = 0; i < resourcesList.size(); i ++){
+										System.out.println(resourcesList.get(i));
+									}
+								} else{
+									System.out.println("Não há recursos registrados com esse nome");
+								}
+							}catch(RemoteException e){
+								e.printStackTrace();
 							}
+								break;
+							case "find":
+								try {
+									System.out.println(serverIf.findResource(vars[1]));
+								} catch (RemoteException e){
+									e.getStackTrace();
+								}
+								break;
+			
 						}
 					} catch (IOException e) {
 						e.printStackTrace();

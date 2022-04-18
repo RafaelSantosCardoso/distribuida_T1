@@ -28,4 +28,8 @@ public class Resource {
     public void setPeer(Peer peer){
         this.peer = peer;
     } 
+    @Override
+    public String toString() {
+        return ("Hash: "+ hash +"\nName:"+resourceName + peer.toString());
+    }
 }

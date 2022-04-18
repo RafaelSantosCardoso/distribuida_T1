@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Period;
 import java.rmi.registry.LocateRegistry;
 
 public class p2pServer extends UnicastRemoteObject implements ServerInterface{
@@ -27,24 +28,25 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
             System.out.println("java RMI registry already exists.");
         }
 
+		
+
         try {
             String server = "rmi://" + args[1] + ":52369/server";
             Naming.rebind(server, new p2pServer());
             System.out.println("Server is ready.");
 			while (true) {
-				// try {
-					
-				// } catch (IOException e) {
-				// 	// decrementa os contadores de timeout a cada 500ms (em função do receive com timeout)
-				// 	for (int i = 0; i < peers.size(); i++) {
-				// 		peers.get(i).setTimeout(peers.get(i).getTimeout() - 1);
-				// 		if (peers.get(i).getTimeout() == 0) {
-				// 			System.out.println("\nPeer " + peers.get(i).getName() + " is dead.");
-				// 			peers.remove(i);
-				// 		}
-				// 	}
-				// 	System.out.print(".");
-				// }
+					new Thread( new Runnable() {
+						public void run(){
+							for(int i = 0; i < peers.size(); i++){
+								peers.get(i).setTimeout(peers.get(i).getTimeout() - 1);
+								if(peers.get(i).getTimeout() == 0){
+									peers.remove(i);
+								}
+								System.out.println(".");
+							}
+						}
+					});
+				
 			}
         } catch (Exception e) {
             System.out.println("Serverfailed: " + e);
@@ -53,7 +55,6 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 
 	@Override
 	public synchronized int registerPeer(String name, String ip, String port) throws RemoteException{
-		System.out.println("Register:" + name + "ip:" + ip + "port: " + port);
 		if(name != null && ip != null && port != null){
 			try {
 				String hash = createSHAHash(name+ip);
@@ -74,6 +75,7 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 			Peer peer = sourcePeer(peerIp);
 			if(peer != null){
 				resorces.add(new Resource(resourceName, hash, peer));
+				System.out.println(hash);
 				return 1;
 			}
 			} catch (NoSuchAlgorithmException e) {
@@ -85,22 +87,46 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 	}
 
 	@Override
-	public synchronized Set<Resource> searchResource(String resourceName) throws RemoteException {
-		// TODO Auto-generated method stub
+	public synchronized List<String> searchResource(String resourceName) throws RemoteException {
+		List<String> list = new ArrayList<>();
+		for(int i = 0; i < resorces.size(); i ++){
+			if (resorces.get(i).getResourceName().contains(resourceName)){
+				list.add(resorces.get(i).toString());
+			}
+		}
+
+		return list;
+	}
+
+	@Override
+	public synchronized String findResource(String hash) throws RemoteException {
+		for(int i = 0; i < resorces.size(); i++){
+			if(resorces.get(i).getHash().equals(hash)){
+				System.out.println(resorces.get(i).getPeer().getName());
+				return resorces.get(i).getPeer().toString();
+			}
+			
+		}
 		return null;
 	}
 
 	@Override
-	public synchronized Peer findResource(String hash) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+	public synchronized int heartBeat(String id) throws RemoteException {
+		for(int i = 0; i < peers.size(); i++){
+			if(peers.get(i).getId().equals(id)){
+				peers.get(i).setTimeout(30);
+				return peers.get(i).getTimeout();
+			}
+			
+		}
+		return 0;
 	}
 
 	private Peer sourcePeer(String ip){
 		Peer peer = null;
 
 		for(int i = 0; i < peers.size(); i++){
-			if(peers.get(i).getAddrIp() == ip){
+			if(peers.get(i).getAddrIp().equals(ip)){
 				peer = peers.get(i);
 			}
 			
