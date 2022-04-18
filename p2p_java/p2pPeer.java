@@ -1,16 +1,11 @@
 import java.io.*;
-import java.net.*;
-import java.util.*;
 
 public class p2pPeer {
 
 	public static void main(String[] args) throws IOException {
-		if (args.length != 2) {
-			System.out.println("Uso: java p2pPeer server <serverip>");
-			System.out.println("<message> is:");
-			System.out.println("create nickname");
-			System.out.println("list nickname");
-			System.out.println("wait");
+		if (args.length < 2 || args.length > 4) {
+			System.out.println("Criar Servidor: java p2pPeer server <server_ip>");
+			System.out.println("Registrar Peer: java p2pPeer peer <client_name> <client_ip> <server_ip> port");
 			return;
 		} else {
 			switch(args[0]){

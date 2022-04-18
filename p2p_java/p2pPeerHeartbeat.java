@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class p2pPeerHeartbeat extends Thread {
 	protected DatagramSocket socket = null;
@@ -10,12 +9,10 @@ public class p2pPeerHeartbeat extends Thread {
 	protected int porta;
 
 	public p2pPeerHeartbeat(String[] args) throws IOException {
-		// envia um packet
 		String vars[] = args[1].split("\\s");
 		data = ("heartbeat " + vars[1]).getBytes();
 		addr = InetAddress.getByName(args[0]);
 		porta = Integer.parseInt(args[2]) + 100;
-		// cria um socket datagrama
 		socket = new DatagramSocket(porta);
 	}
 
@@ -29,10 +26,10 @@ public class p2pPeerHeartbeat extends Thread {
 			}
 			
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(10000);
 			} catch(InterruptedException e) {
+				System.out.println(e);
 			}
-//			System.out.println("\npulse!");
 		}
 	}
 }

@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class p2pPeerThread extends Thread {
 	protected DatagramSocket socket = null;
