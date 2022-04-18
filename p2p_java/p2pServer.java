@@ -1,103 +1,53 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.rmi.registry.LocateRegistry;
+import java.util.*;
 
-public class p2pServer extends Thread{
+public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 	private static volatile String ipServer; 
-	public p2pServer(String[] args) throws IOException {
-		ipServer = args[1];
+
+	public p2pServer() throws RemoteException {
+
 	}
-	public void run() {
-		String content = null;
-		InetAddress addr;
-		int port;
-		byte[] resource = new byte[1024];
-		byte[] response = new byte[1024];
-		try (DatagramSocket socket = new DatagramSocket(9000)) {
-			DatagramPacket packet;
-			
-			List<String> resourceList = new ArrayList<>();
-			List<InetAddress> resourceAddr = new ArrayList<>();
-			List<Integer> resourcePort = new ArrayList<>();
-			List<Integer> timeoutVal = new ArrayList<>();
-			
-			while (true) {
-				try {
-					// recebe datagrama
-					packet = new DatagramPacket(resource, resource.length);
-					socket.setSoTimeout(500);
-					socket.receive(packet);
-					System.out.print("Recebi!");
-									
-					// processa o que foi recebido, adicionando a uma lista
-					content = new String(packet.getData(), 0, packet.getLength());
-					addr = packet.getAddress();
-					port = packet.getPort();
-					String vars[] = content.split("\\s");
-					
-					if (vars[0].equals("create") && vars.length > 1) {
-						int j;
-						
-						for (j = 0; j < resourceList.size(); j++) {
-							if (resourceList.get(j).equals(vars[1]))
-								break;
-						}
-						
-						if (j == resourceList.size()) {
-							resourceList.add(vars[1]);
-							resourceAddr.add(addr);
-							resourcePort.add(port);
-							timeoutVal.add(15);		/* 500ms * 15 = 7.5s (enough for 5s heartbeat) */
-							
-							response = "OK".getBytes();
-						} else {
-							response = "NOT OK".getBytes();
-						}
-						
-						packet = new DatagramPacket(response, response.length, addr, port);
-						socket.send(packet);
-					}
-					
-					if (vars[0].equals("list") && vars.length > 1) {
-						for (int j = 0; j < resourceList.size(); j++) {
-							if (resourceList.get(j).equals(vars[1])) {
-								for (int i = 0; i < resourceList.size(); i++) {
-									String data = new String(resourceList.get(i) + " " + resourceAddr.get(i).toString() + " " + resourcePort.get(i).toString());
-									response = data.getBytes();
-									
-									packet = new DatagramPacket(response, response.length, addr, port);
-									socket.send(packet);
-								}
-								break;
-							}
-						}
-					}
-					
-					if (vars[0].equals("heartbeat") && vars.length > 1) {
-						System.out.print("\nheartbeat: " + vars[1]);
-						for (int i = 0; i < resourceList.size(); i++) {
-							if (resourceList.get(i).equals(vars[1]))
-								timeoutVal.set(i, 15);
-						}
-					}
-				} catch (IOException e) {
-					// decrementa os contadores de timeout a cada 500ms (em função do receive com timeout)
-					for (int i = 0; i < timeoutVal.size(); i++) {
-						timeoutVal.set(i, timeoutVal.get(i) - 1);
-						if (timeoutVal.get(i) == 0) {
-							System.out.println("\nuser " + resourceList.get(i) + " is dead.");
-							resourceList.remove(i);
-							resourceAddr.remove(i);
-							resourcePort.remove(i);
-							timeoutVal.remove(i);
-						}
-					}
-					System.out.print(".");
-				}
-			}
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+	public static void run(String[] args) throws RemoteException{
+		ipServer = args[1];
+		try {
+            System.setProperty("java.rmi.server.hostname", ipServer);
+            LocateRegistry.createRegistry(52369);
+            System.out.println("java RMI registry created.");
+        } catch (RemoteException e) {
+            System.out.println("java RMI registry already exists.");
+        }
+
+        try {
+            String server = "rmi://" + args[1] + ":52369/server";
+            Naming.rebind(server, new p2pServer());
+            System.out.println("Server is ready.");
+        } catch (Exception e) {
+            System.out.println("Serverfailed: " + e);
+        }
+	}
+
+	@Override
+	public synchronized int register(String username) throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public synchronized List<Integer> list_query(int user) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public synchronized String id_query(int user, int id) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
