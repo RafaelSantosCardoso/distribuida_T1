@@ -21,36 +21,40 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 	public void run(String[] args) throws RemoteException{
 		ipServer = args[1];
 		try {
-            System.setProperty("java.rmi.server.hostname", ipServer);
-            LocateRegistry.createRegistry(52369);
-            System.out.println("java RMI registry created.");
-        } catch (RemoteException e) {
-            System.out.println("java RMI registry already exists.");
-        }
+			System.setProperty("java.rmi.server.hostname", ipServer);
+			LocateRegistry.createRegistry(52369);
+			System.out.println("java RMI registry created.");
+		} catch (RemoteException e) {
+			System.out.println("java RMI registry already exists.");
+		}
 
-		
+		try {
+			String server = "rmi://" + args[1] + ":52369/server";
+			Naming.rebind(server, new p2pServer());
+			System.out.println("Server is ready.");
+			
+		} catch (Exception e) {
+			System.out.println("Serverfailed: " + e);
+		}
 
-        try {
-            String server = "rmi://" + args[1] + ":52369/server";
-            Naming.rebind(server, new p2pServer());
-            System.out.println("Server is ready.");
-			while (true) {
-					new Thread( new Runnable() {
-						public void run(){
-							for(int i = 0; i < peers.size(); i++){
-								peers.get(i).setTimeout(peers.get(i).getTimeout() - 1);
-								if(peers.get(i).getTimeout() == 0){
-									peers.remove(i);
-								}
-								System.out.println(".");
-							}
+		while (true) {
+			new Thread( new Runnable() {
+				public void run(){
+					for(int i = 0; i < peers.size(); i++){
+						peers.get(i).setTimeout(peers.get(i).getTimeout() - 1);
+						if(peers.get(i).getTimeout() == 0){
+							peers.remove(i);
 						}
-					});
-				
-			}
-        } catch (Exception e) {
-            System.out.println("Serverfailed: " + e);
-        }
+						try {
+							Thread.sleep(10000);
+						} catch(InterruptedException e) {
+							System.out.println(e);
+						}
+						System.out.println(".");
+					}
+				}
+			});
+	}
 	}
 
 	@Override
@@ -111,9 +115,9 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 	}
 
 	@Override
-	public synchronized int heartBeat(String id) throws RemoteException {
+	public synchronized int heartBeat(String name) throws RemoteException {
 		for(int i = 0; i < peers.size(); i++){
-			if(peers.get(i).getId().equals(id)){
+			if(peers.get(i).getName().equals(name)){
 				peers.get(i).setTimeout(30);
 				return peers.get(i).getTimeout();
 			}

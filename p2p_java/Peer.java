@@ -3,7 +3,7 @@ public class Peer {
     private String name;
 	private String addrIp;
 	private Integer port;
-	private Integer timeout = 10;
+	private Integer timeout = 0;
 
     public Peer(String id, String name, String addrIp, Integer port){
         this.id = id;

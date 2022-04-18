@@ -34,6 +34,7 @@ public class p2pPeerClient extends Thread {
 				System.out.println("registerPeer() successful");
 
 				while (true) {
+					int heatBeat = serverIf.heartBeat(args[1]);
 
 					System.out.println("\nPara registrar um recurso: resource <resource_name> <client_ip>");
 					System.out.println("Example: resource index.html 127.0.0.1");
