@@ -24,8 +24,8 @@ public class p2pServer extends Thread, UnicastRemoteObject implements ServerInte
         }
 
         try {
-            String server = "rmi://" + args[0] + ":52369/server";
-            Naming.rebind(server, new Server());
+            String server = "rmi://" + ipServer + ":52369/server";
+            Naming.rebind(server, new p2pServer());
             System.out.println("Server is ready.");
         } catch (Exception e) {
             System.out.println("Serverfailed: " + e);
