@@ -8,6 +8,9 @@ public class p2pPeer {
 			System.out.println("Registrar Peer: java p2pPeer peer <client_name> <client_ip> <server_ip> port");
 			return;
 		} else {
+			for(int i = 0; i < args.length; i++){
+				System.out.println(args[i]);
+			}
 			switch(args[0]){
                 case "server":
                     new p2pServer().run(args);
