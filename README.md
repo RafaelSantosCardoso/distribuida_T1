@@ -1,1 +1,1 @@
-# distribuida_T1
+# distribuida_T1 Joseph
