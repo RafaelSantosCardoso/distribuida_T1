@@ -20,7 +20,7 @@ public class p2pPeerClient extends Thread {
 		BufferedReader obj = new BufferedReader(new InputStreamReader(System.in));
 		String str;
 		String remoteHostName = this.args[3];
-		String connectLocation = "rmi://" + remoteHostName + ":52369/server_if";
+		String connectLocation = "rmi://" + remoteHostName + ":52369/server";
 
 		ServerInterface serverIf = null;
 		try {

@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -54,6 +53,7 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 
 	@Override
 	public synchronized int registerPeer(String name, String ip, String port) throws RemoteException{
+		System.out.println("Register:" + name + "ip:" + ip + "port: " + port);
 		if(name != null && ip != null && port != null){
 			try {
 				String hash = createSHAHash(name+ip);

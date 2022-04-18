@@ -13,8 +13,8 @@ public class p2pPeer {
                     new p2pServer().run(args);
                     break;
                 case "peer":
-                    new p2pPeerThread(args).start();
-			        new p2pPeerHeartbeat(args).start();
+                    //new p2pPeerThread(args).start();
+			        //new p2pPeerHeartbeat(args).start();
 			        new p2pPeerClient(args).start();
                     break;
 		    }
