@@ -50,10 +50,8 @@ public class p2pPeerClient extends Thread {
 
 									DatagramPacket packetSend = new DatagramPacket(messageSend, messageSend.length, ipClient, portClient);
 									socket.send(packetSend);
-									socket.close();
 									} catch (IOException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
+										socket.close();
 									}
 								}
 							}
