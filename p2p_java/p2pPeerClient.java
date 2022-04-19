@@ -41,7 +41,7 @@ public class p2pPeerClient extends Thread {
 	
 									DatagramPacket packet = new DatagramPacket(download, download.length);
 									socket.receive(packet);
-									System.out.print("Recebi!");
+									System.out.print(new String ( packet.getData()));
 	
 									String message = "Reenviando a resposta!";
 									messageSend = message.getBytes();
@@ -133,7 +133,7 @@ public class p2pPeerClient extends Thread {
 			DatagramPacket received = new DatagramPacket(getFileDownload, getFileDownload.length);
 			socketDownload.receive(received);
 			System.out.println("Retornou a mensagem");
-			System.out.println(received.getData());
+			System.out.println(new String (received.getData()));
 
 
 			socketDownload.close();
@@ -142,7 +142,13 @@ public class p2pPeerClient extends Thread {
 		
 	}
 
-	private void sendFile(){
+	private byte[] sendFile(){
 
 	}
+
+	private void saveFile(){
+
+	}
+
+	
 }
