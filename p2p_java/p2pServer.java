@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Period;
 import java.rmi.registry.LocateRegistry;
 
 public class p2pServer extends UnicastRemoteObject implements ServerInterface{
@@ -37,24 +36,27 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 			System.out.println("Serverfailed: " + e);
 		}
 
-		while (true) {
-			new Thread( new Runnable() {
-				public void run(){
-					for(int i = 0; i < peers.size(); i++){
-						peers.get(i).setTimeout(peers.get(i).getTimeout() - 1);
-						if(peers.get(i).getTimeout() == 0){
-							peers.remove(i);
+		new Thread( new Runnable() {
+			@Override
+			public void run(){
+					while (true) {
+						for(int i = 0; i < peers.size(); i++){
+							peers.get(i).setTimeout(peers.get(i).getTimeout() - 1);
+							if(peers.get(i).getTimeout() == 0){
+								peers.remove(i);
+								System.out.print("Kikked");
+							}
 						}
 						try {
-							Thread.sleep(10000);
+							Thread.sleep(1000);
+
 						} catch(InterruptedException e) {
 							System.out.println(e);
 						}
-						System.out.println(".");
+						System.out.print(".");
 					}
 				}
-			});
-	}
+			}).start();
 	}
 
 	@Override
@@ -116,6 +118,7 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 
 	@Override
 	public synchronized int heartBeat(String name) throws RemoteException {
+		System.out.print("Peer" + name + "entrou");
 		for(int i = 0; i < peers.size(); i++){
 			if(peers.get(i).getName().equals(name)){
 				peers.get(i).setTimeout(30);

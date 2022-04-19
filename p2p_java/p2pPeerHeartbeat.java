@@ -23,8 +23,7 @@ public class p2pPeerHeartbeat extends Thread {
 				socket.send(packet);
 			} catch (IOException e) {
 				socket.close();
-			}
-			
+			}			
 			try {
 				Thread.sleep(10000);
 			} catch(InterruptedException e) {

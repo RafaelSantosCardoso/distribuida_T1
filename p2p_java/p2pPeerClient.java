@@ -30,11 +30,11 @@ public class p2pPeerClient extends Thread {
 			serverIf = (ServerInterface) Naming.lookup(connectLocation);
 
 			int result = serverIf.registerPeer(this.args[1], this.args[2], this.args[4]);
+
 			if(result > 0 ){
 				System.out.println("registerPeer() successful");
 
 				while (true) {
-					int heatBeat = serverIf.heartBeat(args[1]);
 
 					System.out.println("\nPara registrar um recurso: resource <resource_name> <client_ip>");
 					System.out.println("Example: resource index.html 127.0.0.1");
@@ -55,22 +55,23 @@ public class p2pPeerClient extends Thread {
 									System.out.println("A criação do recurso falhou. Tente novamente");
 								}
 								break;
+
 							case "search":
+								try{
+									List<String> resourcesList = serverIf.searchResource(vars[1]);
 
-							try{
-								List<String> resourcesList = serverIf.searchResource(vars[1]);
-
-								if(resourcesList.size() > 0){
-									for(int i = 0; i < resourcesList.size(); i ++){
-										System.out.println(resourcesList.get(i));
+									if(resourcesList.size() > 0){
+										for(int i = 0; i < resourcesList.size(); i ++){
+											System.out.println(resourcesList.get(i));
+										}
+									} else{
+										System.out.println("Não há recursos registrados com esse nome");
 									}
-								} else{
-									System.out.println("Não há recursos registrados com esse nome");
+								}catch(RemoteException e){
+									e.printStackTrace();
 								}
-							}catch(RemoteException e){
-								e.printStackTrace();
-							}
 								break;
+
 							case "find":
 								try {
 									System.out.println(serverIf.findResource(vars[1]));
@@ -78,7 +79,9 @@ public class p2pPeerClient extends Thread {
 									e.getStackTrace();
 								}
 								break;
-			
+							default:
+								serverIf.heartBeat(args[1]);
+
 						}
 					} catch (IOException e) {
 						e.printStackTrace();
