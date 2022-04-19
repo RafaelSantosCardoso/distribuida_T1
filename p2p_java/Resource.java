@@ -30,6 +30,6 @@ public class Resource {
     } 
     @Override
     public String toString() {
-        return ("Hash: "+ hash +"\nName:"+resourceName + peer.toString());
+        return ("\n#########################\n Hash do Recurso: "+ hash +"\nName do Recurso: "+resourceName + peer.toString());
     }
 }

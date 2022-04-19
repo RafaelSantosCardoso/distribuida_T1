@@ -60,28 +60,28 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 	}
 
 	@Override
-	public synchronized int registerPeer(String name, String ip, String port) throws RemoteException{
+	public synchronized String registerPeer(String name, String ip, String port) throws RemoteException{
 		if(name != null && ip != null && port != null){
 			try {
-				String hash = createSHAHash(name+ip);
+				String hash = createSHAHash(name+ip+port);
 				peers.add(new Peer(hash, name, ip, Integer.parseInt(port)));
-				return 1;
+				return hash;
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}
 		}
-		return -1;
+		return null;
 	};
 
 	@Override
-	public synchronized int registerResorce(String resourceName, String peerIp) throws RemoteException {
-		if(resourceName != null && peerIp != null){
+	public synchronized int registerResorce(String resourceName, String peerId) throws RemoteException {
+		if(resourceName != null && peerId != null){
 			try {
 			String hash = createSHAHash(resourceName);
-			Peer peer = sourcePeer(peerIp);
+			Peer peer = sourcePeer(peerId);
+			System.out.println(peer.toString());
 			if(peer != null){
 				resorces.add(new Resource(resourceName, hash, peer));
-				System.out.println(hash);
 				return 1;
 			}
 			} catch (NoSuchAlgorithmException e) {
@@ -118,7 +118,6 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 
 	@Override
 	public synchronized int heartBeat(String name) throws RemoteException {
-		System.out.print("Peer" + name + "entrou");
 		for(int i = 0; i < peers.size(); i++){
 			if(peers.get(i).getName().equals(name)){
 				peers.get(i).setTimeout(30);
@@ -129,11 +128,11 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 		return 0;
 	}
 
-	private Peer sourcePeer(String ip){
+	private Peer sourcePeer(String id){
 		Peer peer = null;
 
 		for(int i = 0; i < peers.size(); i++){
-			if(peers.get(i).getAddrIp().equals(ip)){
+			if(peers.get(i).getId().equals(id)){
 				peer = peers.get(i);
 			}
 			

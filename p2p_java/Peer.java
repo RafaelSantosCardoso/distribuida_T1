@@ -45,6 +45,6 @@ public class Peer {
     } 
     @Override
     public String toString() {
-        return ("\nNome: "+name +"\nId: "+ id +"\nIP: "+ addrIp +"\nPorta: "+ port );
+        return ("\n#########################\nNome do Peer: "+name +"\nId do Peer: "+ id +"\nIP do Peer: "+ addrIp +"\nPorta do Peer: "+ port );
     }
 }
