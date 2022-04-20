@@ -102,10 +102,10 @@ public class Server extends UnicastRemoteObject implements ServerInterface{
 	}
 
 	@Override
-	public synchronized List<String> findResource(String hash) throws RemoteException {
+	public synchronized List<String> findResource(String hash, String id) throws RemoteException {
 		List<String> list = new ArrayList<>(); 
 		for(int i = 0; i < resorces.size(); i++){
-			if(resorces.get(i).getHash().equals(hash)){
+			if(resorces.get(i).getHash().equals(hash) && !(resorces.get(i).getPeer().getId().equals(id))){
 				list.add(resorces.get(i).getPeer().toString());
 			}
 			

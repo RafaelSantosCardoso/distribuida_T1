@@ -73,6 +73,7 @@ public class Client extends Thread {
 							public void run(){
 								while (true) {
 									try {
+										FileManager fileManager = new FileManager();
 										byte[] downloadRequested = new byte[1024];
 										byte[] lengthSend = new byte[8];
 		
@@ -91,7 +92,7 @@ public class Client extends Thread {
 										String hashNotFound = "0";
 										lengthSend = fileName == null ? hashNotFound.getBytes() : msgLenghtToDownload.getBytes();
 
-										if(fileName == null){
+										if(fileName == null && fileManager.findFile(pathBase)){
 											System.out.println("\n**Arquivo não encontrado");
 											System.out.println("\n**Enviando tamanho 0");
 										} else{
@@ -101,16 +102,17 @@ public class Client extends Thread {
 										DatagramPacket packetSendLength = new DatagramPacket(lengthSend, lengthSend.length, ipClient, portClient);
 										socket.send(packetSendLength);
 
-										if(fileName != null){
+										if(fileName != null && fileManager.findFile(pathBase)){
 											byte[] fileSend = new byte[(int)file.length()];
-											FileManager fileManager = new FileManager();
 											fileSend = fileManager.toFileFromArray(pathBase);
 											System.out.println("\n**Enviando o arquivo " + fileName);
 											DatagramPacket packetSend = new DatagramPacket(fileSend, fileSend.length, ipClient, portClient);
 											socket.send(packetSend);
 										}
+
 									} catch (IOException e) {
 										socket.close();
+										e.printStackTrace();
 									} catch (Exception e) {
 										socket.close();
 										e.printStackTrace();
@@ -157,7 +159,7 @@ public class Client extends Thread {
 
 								case "find":
 									try {
-										List<String> resourcesList = serverIf.findResource(vars[1]);
+										List<String> resourcesList = serverIf.findResource(vars[1], userId);
 										if(resourcesList.size() > 0){
 											for(int i = 0; i < resourcesList.size(); i ++){
 												System.out.println(resourcesList.get(i));

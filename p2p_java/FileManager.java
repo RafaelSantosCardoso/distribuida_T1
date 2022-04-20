@@ -22,4 +22,10 @@ public class FileManager {
         fd.sync();
         fos.close();
     }
+
+    public boolean findFile(String path){
+        File file = new File(path);
+
+       return file.exists();
+    }
 }
