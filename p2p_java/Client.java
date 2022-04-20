@@ -37,35 +37,33 @@ public class Client extends Thread {
 
 				if(userId != null){
 					System.out.println("** Peer registrado com sucesso **");
+
+					// new Thread( new Runnable() {
+					// 	@Override
+					// 	public void run(){
+					// 		while (true) {
+					// 			try {
+					// 				sendHeartBeat(serverIf, userId);
+					// 				Thread.sleep(10000);
+					// 			} catch (InterruptedException e) {
+					// 				socket.close();
+					// 			}
+					// 		}
+					// 	}
+					// }).start();
+
 					while (true) {
 						// Timer timer = new Timer();
 						// timer.schedule(new TimerTask() {
 						// 	public void run() {
 						// 		try {
-						// 			serverIf.heartBeat(userId);
+						// 			sendHeartBeat(serverIf, userId);
 						// 		} catch (Exception e) {
 						// 			System.out.print("HeartBeat falhou ao ser enviado");
 						// 			e.printStackTrace();
 						// 		}
 						// 	}
 						// }, 0, 10000);
-
-						//Socket received
-						// new Thread( new Runnable() {
-						// 	@Override
-						// 	public void run(){
-						// 		while (true) {
-						// 			try {
-						// 				serverIf.heartBeat(userId);
-						// 				Thread.sleep(10000);
-						// 			} catch (IOException | InterruptedException e) {
-						// 				socket.close();
-						// 			}
-						// 		}
-						// 	}
-						// }).start();
-
-						sendHeartBeat(serverIf, userId);
 
 						//Socket received
 						new Thread( new Runnable() {
@@ -241,7 +239,7 @@ public class Client extends Thread {
 		return null;
 	}
 
-	private void sendHeartBeat(ServerInterface server, String userId) {
+	private static void sendHeartBeat(ServerInterface server, String userId) {
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {

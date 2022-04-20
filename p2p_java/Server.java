@@ -43,7 +43,13 @@ public class Server extends UnicastRemoteObject implements ServerInterface{
 						for(int i = 0; i < peers.size(); i++){
 							peers.get(i).setTimeout(peers.get(i).getTimeout() - 1);
 							if(peers.get(i).getTimeout() == 0){
+								for(int j = 0; j < resorces.size(); i++){
+									if(resorces.get(j).getPeer().getId().equals(peers.get(i).getId())){
+										resorces.remove(j);
+									}
+								}
 								peers.remove(i);
+
 								System.out.print("Peer "+ peers.get(i).getName() + " morreu...");
 							}
 						}
