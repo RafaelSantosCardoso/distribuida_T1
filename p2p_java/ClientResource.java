@@ -1,12 +1,10 @@
-public class Resource {
+public class ClientResource {
     private String resourceName;
 	private String hash;
-	private Peer peer;
 
-    public Resource(String resourceName, String hash, Peer peer){
+    public ClientResource(String resourceName, String hash){
         this.resourceName = resourceName;
         this.hash = hash;
-        this.peer = peer;
     }
 
     public String getResourceName(){
@@ -15,9 +13,6 @@ public class Resource {
     public String getHash(){
         return this.hash;
     } 
-    public Peer getPeer(){
-        return this.peer;
-    } 
 
     public void setResourceName(String resourceName){
         this.resourceName = resourceName;
@@ -25,9 +20,7 @@ public class Resource {
     public void setHash(String hash){
         this.hash = hash;
     } 
-    public void setPeer(Peer peer){
-        this.peer = peer;
-    } 
+
     @Override
     public String toString() {
         return ("\n#########################\nHash do Recurso: "+ hash +"\nName do Recurso: "+resourceName);

@@ -44,12 +44,11 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 							peers.get(i).setTimeout(peers.get(i).getTimeout() - 1);
 							if(peers.get(i).getTimeout() == 0){
 								peers.remove(i);
-								System.out.print("Kikked");
+								System.out.print("Peer "+ peers.get(i).getName() + " morreu...");
 							}
 						}
 						try {
 							Thread.sleep(1000);
-
 						} catch(InterruptedException e) {
 							System.out.println(e);
 						}
@@ -74,29 +73,27 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 	};
 
 	@Override
-	public synchronized int registerResorce(String resourceName, String peerId) throws RemoteException {
+	public synchronized String registerResorce(String resourceName, String peerId) throws RemoteException {
 		if(resourceName != null && peerId != null){
 			try {
 			String hash = createSHAHash(resourceName);
 			Peer peer = sourcePeer(peerId);
-			System.out.println(peer.toString());
 			if(peer != null){
 				resorces.add(new Resource(resourceName, hash, peer));
-				return 1;
+				return hash;
 			}
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}
-			return 0;
 		}
-		return -1;
+		return null;
 	}
 
 	@Override
-	public synchronized List<String> searchResource(String resourceName) throws RemoteException {
-		List<String> list = new ArrayList<>();
+	public synchronized Set<String> searchResource(String resourceName, String id) throws RemoteException {
+		Set<String> list = new HashSet<String>();
 		for(int i = 0; i < resorces.size(); i ++){
-			if (resorces.get(i).getResourceName().contains(resourceName)){
+			if (resorces.get(i).getResourceName().contains(resourceName) && !(resorces.get(i).getPeer().getId().equals(id))){
 				list.add(resorces.get(i).toString());
 			}
 		}
@@ -105,22 +102,23 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 	}
 
 	@Override
-	public synchronized String findResource(String hash) throws RemoteException {
+	public synchronized List<String> findResource(String hash) throws RemoteException {
+		List<String> list = new ArrayList<>(); 
 		for(int i = 0; i < resorces.size(); i++){
 			if(resorces.get(i).getHash().equals(hash)){
-				System.out.println(resorces.get(i).getPeer().getName());
-				return resorces.get(i).getPeer().toString();
+				list.add(resorces.get(i).getPeer().toString());
 			}
 			
 		}
-		return null;
+		return list;
 	}
 
 	@Override
 	public synchronized int heartBeat(String name) throws RemoteException {
 		for(int i = 0; i < peers.size(); i++){
 			if(peers.get(i).getName().equals(name)){
-				peers.get(i).setTimeout(30);
+				System.out.println(name);
+				peers.get(i).setTimeout(10);
 				return peers.get(i).getTimeout();
 			}
 			
