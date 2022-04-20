@@ -8,12 +8,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.rmi.registry.LocateRegistry;
 
-public class p2pServer extends UnicastRemoteObject implements ServerInterface{
+public class Server extends UnicastRemoteObject implements ServerInterface{
 	private static volatile String ipServer; 
 	private static volatile List<Peer> peers = new ArrayList<>();
 	private static volatile List<Resource> resorces = new ArrayList<>();
 
-	public p2pServer() throws RemoteException {
+	public Server() throws RemoteException {
 
 	}
 
@@ -29,7 +29,7 @@ public class p2pServer extends UnicastRemoteObject implements ServerInterface{
 
 		try {
 			String server = "rmi://" + args[1] + ":52369/server";
-			Naming.rebind(server, new p2pServer());
+			Naming.rebind(server, new Server());
 			System.out.println("Server is ready.");
 			
 		} catch (Exception e) {

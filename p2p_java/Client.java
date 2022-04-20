@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class p2pPeerClient extends Thread {
+public class Client extends Thread {
 	protected DatagramSocket socket = null;
 	int countFile = 0;
 
@@ -17,7 +17,7 @@ public class p2pPeerClient extends Thread {
 
 	private List<ClientResource> clientResource = new ArrayList<>();
 
-	public p2pPeerClient(String[] args) throws IOException {
+	public Client(String[] args) throws IOException {
 		this.args = args;
 		this.socket = new DatagramSocket(Integer.parseInt(args[4]));
 	}
